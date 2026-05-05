@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Font Families</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .fam { border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .tag { font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .name { font-size: 28px; color: var(--navy); margin-bottom: 4px; }
+  .sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+  .aa { font-size: 36px; letter-spacing: -0.02em; color: var(--navy); }
+  .weights { font-size: 13px; color: var(--body); margin-top: 10px; display:flex; gap:12px; flex-wrap:wrap; }
+  .weights span { display:inline-block; }
+  .poppins { font-family: var(--font-display); }
+  .opensans { font-family: var(--font-body); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="fam">
+      <div class="tag">Headings</div>
+      <div class="name poppins" style="font-weight:800">Poppins</div>
+      <div class="sub">Geometric · friendly · approachable</div>
+      <div class="aa poppins">Aa Bb Gg Qq 0123</div>
+      <div class="weights poppins">
+        <span style="font-weight:400">Regular</span>
+        <span style="font-weight:500">Medium</span>
+        <span style="font-weight:600">Semibold</span>
+        <span style="font-weight:700">Bold</span>
+        <span style="font-weight:800">Extrabold</span>
+        <span style="font-weight:900">Black</span>
+      </div>
+    </div>
+    <div class="fam">
+      <div class="tag">Body</div>
+      <div class="name opensans" style="font-weight:700">Open Sans</div>
+      <div class="sub">Industry-standard UI · trustworthy · readable</div>
+      <div class="aa opensans">Aa Bb Gg Qq 0123</div>
+      <div class="weights opensans">
+        <span style="font-weight:400">Regular</span>
+        <span style="font-weight:500">Medium</span>
+        <span style="font-weight:600">Semibold</span>
+        <span style="font-weight:700">Bold</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

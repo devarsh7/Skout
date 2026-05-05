@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Iconography</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .row { display:grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .tile { display:flex; flex-direction:column; align-items:center; gap: 6px; padding: 14px 6px; border: 1px solid var(--border); border-radius: 10px; }
+  .tile svg { width: 24px; height: 24px; color: var(--navy); stroke-width: 1.75; }
+  .name { font-family: var(--font-display); font-weight: 600; font-size: 11px; color: var(--navy); }
+  .role { font-size: 10px; color: var(--muted); }
+  .note { margin-top: 14px; font-size: 12px; color: var(--muted); }
+  .note code { background: var(--blue-50); color: var(--blue-700); padding: 1px 6px; border-radius: 4px; font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile"><i data-lucide="mic"></i><span class="name">mic</span><span class="role">onboarding</span></div>
+    <div class="tile"><i data-lucide="search"></i><span class="name">search</span><span class="role">discover</span></div>
+    <div class="tile"><i data-lucide="target"></i><span class="name">target</span><span class="role">filter</span></div>
+    <div class="tile"><i data-lucide="mail"></i><span class="name">mail</span><span class="role">outreach</span></div>
+    <div class="tile"><i data-lucide="bar-chart-3"></i><span class="name">bar-chart-3</span><span class="role">campaigns</span></div>
+    <div class="tile"><i data-lucide="lock"></i><span class="name">lock</span><span class="role">owned data</span></div>
+    <div class="tile"><i data-lucide="brain"></i><span class="name">brain</span><span class="role">multi-agent</span></div>
+    <div class="tile"><i data-lucide="sparkles"></i><span class="name">sparkles</span><span class="role">✨ actions</span></div>
+    <div class="tile"><i data-lucide="rocket"></i><span class="name">rocket</span><span class="role">run agent</span></div>
+    <div class="tile"><i data-lucide="contact"></i><span class="name">contact</span><span class="role">view contact</span></div>
+    <div class="tile"><i data-lucide="map-pin"></i><span class="name">map-pin</span><span class="role">location</span></div>
+    <div class="tile"><i data-lucide="trending-up"></i><span class="name">trending-up</span><span class="role">engagement</span></div>
+  </div>
+  <div class="note">Lucide · 24×24 · 1.75px stroke · currentColor. Emoji in current code → Lucide in production.</div>
+  <script>lucide.createIcons();</script>
+</body>
+</html>

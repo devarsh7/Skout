@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Primary Blue</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; }
+  .scale { display:grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+  .sw { display:flex; flex-direction:column; border-radius: 10px; overflow:hidden; border: 1px solid var(--border); }
+  .chip { height: 70px; }
+  .meta { padding: 6px 8px; font-family: var(--font-mono); font-size: 10px; color: var(--navy); background:#fff; display:flex; justify-content:space-between; }
+  .meta b { font-family: var(--font-display); font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="scale" id="s"></div>
+  <script>
+    const scale = [
+      ['50','#EFF6FF'],['100','#DBEAFE'],['200','#BFDBFE'],['300','#93C5FD'],['400','#60A5FA'],
+      ['500','#3B82F6'],['600','#2563EB'],['700','#1D4ED8'],['800','#1E40AF'],['900','#1E3A8A']
+    ];
+    document.getElementById('s').innerHTML = scale.map(([n,h])=>`
+      <div class="sw">
+        <div class="chip" style="background:${h}"></div>
+        <div class="meta"><b>${n}</b><span>${h}</span></div>
+      </div>`).join('');
+  </script>
+</body>
+</html>

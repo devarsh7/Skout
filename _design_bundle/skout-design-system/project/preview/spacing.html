@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Spacing</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .row { display:flex; gap:18px; align-items:flex-end; }
+  .tile { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .bar { background: var(--blue-600); width: 14px; border-radius: 3px; }
+  .name { font-family: var(--font-display); font-weight:700; color: var(--navy); font-size: 11px; }
+  .val { font-family: var(--font-mono); font-size: 10px; color: var(--muted); }
+  .legend { margin-top: 16px; font-size: 12px; color: var(--muted); }
+  .legend code { background: var(--blue-50); color: var(--blue-700); padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile"><div class="bar" style="height:4px"></div><div class="name">1</div><div class="val">4</div></div>
+    <div class="tile"><div class="bar" style="height:8px"></div><div class="name">2</div><div class="val">8</div></div>
+    <div class="tile"><div class="bar" style="height:12px"></div><div class="name">3</div><div class="val">12</div></div>
+    <div class="tile"><div class="bar" style="height:16px"></div><div class="name">4</div><div class="val">16</div></div>
+    <div class="tile"><div class="bar" style="height:20px"></div><div class="name">5</div><div class="val">20</div></div>
+    <div class="tile"><div class="bar" style="height:24px"></div><div class="name">6</div><div class="val">24</div></div>
+    <div class="tile"><div class="bar" style="height:32px"></div><div class="name">8</div><div class="val">32</div></div>
+    <div class="tile"><div class="bar" style="height:40px"></div><div class="name">10</div><div class="val">40</div></div>
+    <div class="tile"><div class="bar" style="height:48px"></div><div class="name">12</div><div class="val">48</div></div>
+    <div class="tile"><div class="bar" style="height:64px"></div><div class="name">16</div><div class="val">64</div></div>
+    <div class="tile"><div class="bar" style="height:80px"></div><div class="name">20</div><div class="val">80</div></div>
+  </div>
+  <div class="legend">4px base. Section rhythm <code>--section-y: 88px</code> · gutter <code>clamp(1.5rem, 8vw, 7rem)</code></div>
+</body>
+</html>

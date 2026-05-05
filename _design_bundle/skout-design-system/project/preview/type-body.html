@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Body Type</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; }
+  .stack { display:flex; flex-direction:column; gap: 12px; }
+  .spec { display:flex; align-items:baseline; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .spec:last-child { border:0; }
+  .meta { font-family: var(--font-mono); font-size: 10px; color: var(--muted); width: 190px; flex-shrink:0; }
+  .sample { flex:1; }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="spec">
+      <div class="meta">H2 · Poppins 700 · 1.5rem</div>
+      <div class="sample"><h2>Built on trust.</h2></div>
+    </div>
+    <div class="spec">
+      <div class="meta">Lead · Open Sans 400 · 1.12rem<br>lh 1.8 · max-width 540px</div>
+      <div class="sample"><p class="sk-lead">Skout connects brands with creators through semantic search and multi-agent AI.</p></div>
+    </div>
+    <div class="spec">
+      <div class="meta">Body · Open Sans 400 · 1rem<br>color body · lh 1.8</div>
+      <div class="sample"><p>Creators onboard themselves — brands search in natural language.</p></div>
+    </div>
+    <div class="spec">
+      <div class="meta">Caption · Open Sans 400 · 0.78rem<br>color muted</div>
+      <div class="sample"><p class="sk-caption">Mumbai, IN · 124k followers</p></div>
+    </div>
+  </div>
+</body>
+</html>

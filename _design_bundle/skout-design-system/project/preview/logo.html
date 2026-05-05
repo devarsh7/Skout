@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Logo</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; display:flex; align-items:center; justify-content:center; min-height:150px; }
+  .row { display:flex; align-items:center; gap:40px; }
+  .tile { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .swatch-dark { background: var(--navy); padding:18px 26px; border-radius: 14px; }
+  .swatch-light { background: var(--bg-alt); padding:18px 26px; border-radius: 14px; border: 1px solid var(--border); }
+  .caption { font-family: var(--font-body); font-size: 12px; color: var(--muted); }
+  img { display:block; height: 54px; }
+  .dark-inv { filter: invert(1) hue-rotate(180deg) saturate(1.1) brightness(1.1); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile">
+      <div class="swatch-light"><img src="../assets/logo-skout-wordmark.svg" alt="Skout wordmark"></div>
+      <div class="caption">Wordmark · on light</div>
+    </div>
+    <div class="tile">
+      <div class="swatch-light"><img src="../assets/logo-skout-owl.svg" alt="Skout owl" style="height:64px"></div>
+      <div class="caption">Owl mark</div>
+    </div>
+    <div class="tile">
+      <div class="swatch-dark"><img src="../assets/logo-skout-owl.svg" alt="Skout owl on dark" style="height:64px"></div>
+      <div class="caption">Owl · on navy</div>
+    </div>
+  </div>
+</body>
+</html>

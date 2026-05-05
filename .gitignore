@@ -1,0 +1,58 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+skout.db*
+
+# IDE
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# VS Code
+.vscode/settings.json
+.vscode/launch.json.local
+
+# Logs
+*.log
+logs/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Alembic
+# alembic/versions/*.py
+# !alembic/versions/__init__.py
+
+# Local data
+data/local_cache/
+
+# Claude Code
+.claude/
+
+# Misc local files
+null

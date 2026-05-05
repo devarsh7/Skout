@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Surfaces</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .card { border:1px solid var(--border); border-radius: 12px; overflow:hidden; }
+  .chip { height: 80px; }
+  .meta { padding: 10px 12px; display:flex; justify-content:space-between; align-items:baseline; }
+  .name { font-family: var(--font-display); font-weight:700; color: var(--navy); font-size: 13px; }
+  .hex { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .use { padding: 0 12px 10px; font-size: 11px; color: var(--muted); line-height:1.4; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="chip" style="background:#FFFFFF; border-bottom:1px solid var(--border)"></div>
+      <div class="meta"><span class="name">Page</span><span class="hex">#FFFFFF</span></div>
+      <div class="use">Default background</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#F8FAFD"></div>
+      <div class="meta"><span class="name">Alt</span><span class="hex">#F8FAFD</span></div>
+      <div class="use">Section alternation</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:linear-gradient(180deg,#EEF4FF 0%,#F5F9FF 60%,#FFFFFF 100%)"></div>
+      <div class="meta"><span class="name">Hero</span><span class="hex">#EEF4FF → #FFF</span></div>
+      <div class="use">Hero band only</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#EFF6FF; border-bottom:1px solid #DBEAFE"></div>
+      <div class="meta"><span class="name">Blue faint</span><span class="hex">#EFF6FF</span></div>
+      <div class="use">Mission, info alerts</div>
+    </div>
+  </div>
+</body>
+</html>

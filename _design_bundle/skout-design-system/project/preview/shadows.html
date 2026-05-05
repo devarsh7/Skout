@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Shadows</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:30px; background:#F8FAFD; font-family: var(--font-body); }
+  .row { display:grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+  .tile { display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .box { width: 82px; height: 60px; background:#FFFFFF; border-radius: 12px; }
+  .primary { background: var(--blue-600); }
+  .name { font-family: var(--font-display); font-weight:700; color: var(--navy); font-size: 11px; }
+  .val { font-family: var(--font-mono); font-size: 9.5px; color: var(--muted); }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="tile"><div class="box" style="box-shadow: var(--shadow-xs)"></div><div class="name">xs</div><div class="val">inputs</div></div>
+    <div class="tile"><div class="box" style="box-shadow: var(--shadow-sm)"></div><div class="name">sm</div><div class="val">cards rest</div></div>
+    <div class="tile"><div class="box" style="box-shadow: var(--shadow-md)"></div><div class="name">md</div><div class="val">cards hover</div></div>
+    <div class="tile"><div class="box" style="box-shadow: var(--shadow-lg)"></div><div class="name">lg</div><div class="val">menus/modals</div></div>
+    <div class="tile"><div class="box primary" style="box-shadow: var(--shadow-blue)"></div><div class="name">blue</div><div class="val">CTA rest</div></div>
+    <div class="tile"><div class="box primary" style="box-shadow: var(--shadow-blue-lg)"></div><div class="name">blue-lg</div><div class="val">CTA hover</div></div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FastAPI: backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["backend.main:app", "--reload", "--port", "8000"],
+      "jinja": true,
+      "justMyCode": false
+    },
+    {
+      "name": "Streamlit: frontend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": ["run", "frontend/streamlit_app.py"],
+      "justMyCode": false
+    },
+    {
+      "name": "MCP Server",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "backend.mcp_server.server",
+      "justMyCode": false
+    }
+  ]
+}

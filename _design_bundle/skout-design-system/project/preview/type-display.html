@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Display Type</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; }
+  .stack { display:flex; flex-direction:column; gap: 14px; }
+  .spec { display:flex; align-items:baseline; gap: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .spec:last-child { border:0; }
+  .meta { font-family: var(--font-mono); font-size: 10px; color: var(--muted); width: 210px; flex-shrink:0; }
+  .sample { flex: 1; }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="spec">
+      <div class="meta">Display · Poppins 900 · clamp(2.6–4.2rem)<br>letter-spacing -0.035em · lh 1.08</div>
+      <div class="sample"><span class="sk-display">Find the right creators.</span></div>
+    </div>
+    <div class="spec">
+      <div class="meta">H1 · Poppins 800 · clamp(1.8–2.6rem)<br>letter-spacing -0.03em</div>
+      <div class="sample"><h1>Two sides. One seamless workflow.</h1></div>
+    </div>
+    <div class="spec">
+      <div class="meta">Eyebrow · Poppins 700 · 0.7rem<br>uppercase · tracking 0.14em · blue-600</div>
+      <div class="sample"><span class="sk-label">How it works</span></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Form Inputs</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 640px; }
+  label { display:block; font-family: var(--font-body); font-weight: 500; font-size: 13px; color: var(--navy); margin-bottom: 6px; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px;
+    background: #fff; border: 1.5px solid var(--border); border-radius: 8px;
+    font-family: var(--font-body); font-size: 14px; color: var(--navy);
+    transition: border-color .18s, box-shadow .18s; box-sizing: border-box;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--blue-600); box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding: 5px 10px; background: var(--blue-50); color: var(--blue-700); border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--blue-100); }
+  .helper { font-size: 11px; color: var(--muted); margin-top: 5px; }
+</style>
+</head>
+<body>
+  <div class="grid">
+    <div>
+      <label>Full name *</label>
+      <input placeholder="Priya Sharma">
+      <div class="helper">Required</div>
+    </div>
+    <div>
+      <label>Country (ISO-2) *</label>
+      <input value="IN" style="border-color: var(--blue-600); box-shadow: 0 0 0 3px rgba(37,99,235,.1);">
+      <div class="helper">Focused state</div>
+    </div>
+    <div>
+      <label>Niches *</label>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; padding: 8px 10px; border:1.5px solid var(--border); border-radius:8px; min-height: 40px; align-items:center;">
+        <span class="chip">beauty ×</span>
+        <span class="chip">fashion ×</span>
+        <span class="chip">lifestyle ×</span>
+      </div>
+    </div>
+    <div>
+      <label>Platform</label>
+      <select>
+        <option>Instagram</option><option>TikTok</option><option>YouTube</option>
+      </select>
+    </div>
+  </div>
+</body>
+</html>

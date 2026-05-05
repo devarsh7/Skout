@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Semantic</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .card { border:1px solid var(--border); border-radius: 12px; overflow:hidden; }
+  .chip { height: 60px; display:flex; align-items:center; justify-content:center; color:#fff; font-family: var(--font-display); font-weight:700; }
+  .bg { height: 24px; border-top: 1px solid var(--border); }
+  .meta { padding: 8px 12px; font-family: var(--font-mono); font-size: 10.5px; color: var(--muted); display:flex; justify-content:space-between; }
+  .lbl { font-family: var(--font-display); font-weight:700; color: var(--navy); font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="chip" style="background:#16A34A">Success</div>
+      <div class="bg" style="background:#F0FDF4"></div>
+      <div class="meta"><span class="lbl">Success</span><span>#16A34A</span></div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#F59E0B">Warning</div>
+      <div class="bg" style="background:#FFFBEB"></div>
+      <div class="meta"><span class="lbl">Warning</span><span>#F59E0B</span></div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#DC2626">Danger</div>
+      <div class="bg" style="background:#FEF2F2"></div>
+      <div class="meta"><span class="lbl">Danger</span><span>#DC2626</span></div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#2563EB">Info</div>
+      <div class="bg" style="background:#EFF6FF"></div>
+      <div class="meta"><span class="lbl">Info</span><span>#2563EB</span></div>
+    </div>
+  </div>
+</body>
+</html>

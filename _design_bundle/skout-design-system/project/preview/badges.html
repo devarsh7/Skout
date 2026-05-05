@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Badges</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); display:flex; flex-direction:column; gap:14px; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--muted); width: 80px; }
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:6px;
+    background: var(--blue-50); border: 1px solid var(--blue-100); color: var(--blue-600);
+    font-family: var(--font-display); font-weight: 700; font-size: 11px;
+    letter-spacing: .12em; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 999px;
+  }
+  .chip { display:inline-flex; align-items:center; gap:5px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .chip.blue { background: var(--blue-50); color: var(--blue-700); border: 1px solid var(--blue-100); }
+  .chip.green { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+  .chip.amber { background: #FFFBEB; color: #B45309; border: 1px solid #FEF3C7; }
+  .dot { display:inline-block; width:6px; height:6px; border-radius:50%; background: currentColor; }
+  .status { display:inline-flex; align-items:center; gap:5px; font-size: 12px; font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="row"><span class="lbl">Eyebrow</span>
+    <span class="eyebrow">✦ AI-Powered Creator Discovery</span>
+    <span class="eyebrow">How it works</span>
+  </div>
+  <div class="row"><span class="lbl">Niche</span>
+    <span class="chip blue">beauty</span>
+    <span class="chip blue">fashion</span>
+    <span class="chip blue">lifestyle</span>
+    <span class="chip blue">sustainability</span>
+  </div>
+  <div class="row"><span class="lbl">Status</span>
+    <span class="status" style="color:#16A34A"><span class="dot"></span>Backend online</span>
+    <span class="status" style="color:#DC2626"><span class="dot"></span>Backend offline</span>
+    <span class="chip green">Open to collabs</span>
+    <span class="chip amber">Pending review</span>
+  </div>
+</body>
+</html>

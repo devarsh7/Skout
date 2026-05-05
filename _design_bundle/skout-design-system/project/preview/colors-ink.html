@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Ink</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:24px; background:#FFFFFF; font-family: var(--font-body); }
+  .row { display:grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .card { border:1px solid var(--border); border-radius: 12px; overflow:hidden; }
+  .chip { height: 80px; }
+  .meta { padding: 10px 12px; display:flex; justify-content:space-between; align-items:baseline; }
+  .name { font-family: var(--font-display); font-weight:700; color: var(--navy); font-size: 13px; }
+  .hex { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .use { padding: 0 12px 10px; font-size: 11px; color: var(--muted); line-height:1.4; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <div class="card">
+      <div class="chip" style="background:#0F172A"></div>
+      <div class="meta"><span class="name">Navy</span><span class="hex">#0F172A</span></div>
+      <div class="use">Headings, logo text</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#334155"></div>
+      <div class="meta"><span class="name">Body</span><span class="hex">#334155</span></div>
+      <div class="use">Paragraphs</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#64748B"></div>
+      <div class="meta"><span class="name">Muted</span><span class="hex">#64748B</span></div>
+      <div class="use">Secondary, nav links</div>
+    </div>
+    <div class="card">
+      <div class="chip" style="background:#94A3B8"></div>
+      <div class="meta"><span class="name">Subtle</span><span class="hex">#94A3B8</span></div>
+      <div class="use">Labels, captions</div>
+    </div>
+  </div>
+</body>
+</html>

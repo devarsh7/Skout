@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; padding:28px; background:#FFFFFF; font-family: var(--font-body); display:flex; flex-direction:column; gap:14px; }
+  .row { display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--muted); width: 70px; }
+  .btn {
+    display:inline-flex; align-items:center; gap: 8px;
+    background: var(--blue-600); color:#fff; padding: 11px 22px; border-radius: 9px;
+    font-family: var(--font-body); font-weight: 700; font-size: 14px;
+    box-shadow: var(--shadow-blue); border: 1.5px solid transparent; cursor:pointer;
+    transition: all .2s ease;
+  }
+  .btn:hover { background: var(--blue-700); box-shadow: var(--shadow-blue-lg); transform: translateY(-2px); }
+  .btn.outline { background: transparent; color: var(--blue-600); border-color: var(--border-blue); box-shadow: none; }
+  .btn.outline:hover { background: var(--blue-50); border-color: rgba(37,99,235,0.35); transform: translateY(-2px); }
+  .btn.ghost { background: transparent; color: var(--muted); box-shadow: none; font-weight:500; }
+  .btn.ghost:hover { background: var(--bg-alt); color: var(--navy); transform:none; }
+  .btn.sm { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <div class="row"><span class="lbl">Primary</span>
+    <button class="btn">🚀 Run Discovery</button>
+    <button class="btn">✨ Create profile</button>
+    <button class="btn sm">Submit</button>
+  </div>
+  <div class="row"><span class="lbl">Outline</span>
+    <button class="btn outline">🔍 Discover Creators</button>
+    <button class="btn outline sm">View all</button>
+  </div>
+  <div class="row"><span class="lbl">Ghost</span>
+    <button class="btn ghost">Home</button>
+    <button class="btn ghost">Our Mission</button>
+    <button class="btn ghost">Discover</button>
+  </div>
+</body>
+</html>

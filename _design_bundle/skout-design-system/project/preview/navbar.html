@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skout · Navbar</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  body { margin:0; background:#F8FAFD; font-family: var(--font-body); }
+  .nav {
+    position: relative; display:flex; align-items:center; justify-content:space-between;
+    padding: 0 40px; height: 62px;
+    background: rgba(255,255,255,0.92); border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(16px);
+  }
+  .logo { display:flex; align-items:center; gap:10px; font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--navy); letter-spacing: -0.03em; }
+  .logo img { width: 28px; height: 28px; }
+  .logo .dot { color: var(--blue-600); }
+  .links { display:flex; align-items:center; gap: 4px; }
+  .link { color: var(--muted); font-size: 14px; font-weight: 500; padding: 7px 12px; border-radius: 7px; cursor:pointer; }
+  .link:hover, .link.active { color: var(--navy); background: var(--bg-alt); }
+  .sep { width:1px; height: 18px; background: var(--border); margin: 0 8px; }
+  .cta { margin-left: 10px; background: var(--blue-600); color:#fff; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow-blue); }
+  .pad { height: 80px; }
+</style>
+</head>
+<body>
+  <div class="nav">
+    <div class="logo"><img src="../assets/logo-skout-owl.svg" alt=""><span>Skout<span class="dot">.</span></span></div>
+    <div class="links">
+      <span class="link active">Home</span>
+      <span class="link">Our Mission</span>
+      <div class="sep"></div>
+      <span class="link">Discover</span>
+      <span class="link">Filter</span>
+      <span class="link">Outreach</span>
+      <span class="link">Campaigns</span>
+      <span class="cta">Join as Creator</span>
+    </div>
+  </div>
+  <div class="pad"></div>
+</body>
+</html>
