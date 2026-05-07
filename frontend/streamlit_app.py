@@ -1,5 +1,6 @@
 """Skout — entry point / role-based router."""
 from __future__ import annotations
+from PIL import Image
 import streamlit as st
 from frontend.utils.session import restore_session
 from frontend.utils.styles import (
@@ -11,7 +12,8 @@ from frontend.utils.styles import (
     _P_LOGIN, _P_SIGNUP, _P_UPDATE_PROFILE,
 )
 
-st.set_page_config(page_title="Skout", page_icon="🦉",
+_icon = Image.open("frontend/static/skout-logo.png")
+st.set_page_config(page_title="Skout", page_icon=_icon,
                    layout="wide", initial_sidebar_state="collapsed")
 inject_css()
 restore_session()

@@ -165,93 +165,10 @@ def render_navbar() -> None:
     """Home-page navbar — personalised when user is logged in."""
     user = st.session_state.get("user")
 
-    st.markdown("""
-<style>
-/* ── HOME NAVBAR ── */
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo){
-  background:rgba(255,255,255,.97) !important;
-  border-bottom:1px solid var(--border) !important;
-  padding:0 clamp(1.5rem,5vw,4rem) !important;
-  min-height:64px !important;align-items:center !important;
-  position:sticky !important;top:0 !important;z-index:1000 !important;
-  box-shadow:0 1px 8px rgba(15,23,42,.06) !important;
-}
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) [data-testid="stColumn"]{
-  display:flex !important;flex-direction:row !important;
-  align-items:center !important;padding:0 6px !important;
-}
-/* Center the 3 pill buttons in their equal-width columns */
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) [data-testid="stColumn"]:has(.sk-nav-creator),
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) [data-testid="stColumn"]:has(.sk-nav-business),
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) [data-testid="stColumn"]:has(.sk-nav-login){
-  justify-content:center !important;
-}
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) .stMarkdown,
-[data-testid="stHorizontalBlock"]:has(.sk-home-logo) [data-testid="stMarkdownContainer"]{
-  display:flex !important;align-items:center !important;width:fit-content !important;
-}
-/* Shrink-wrap the marker divs so buttons don't stretch */
-.sk-nav-creator,.sk-nav-business,.sk-nav-login{
-  display:inline-flex !important;width:fit-content !important;
-}
-.sk-home-logo{
-  display:flex !important;align-items:center !important;justify-content:flex-start !important;
-  font-family:var(--fd);font-weight:800;font-size:21px;color:var(--navy);
-  white-space:nowrap;letter-spacing:-.04em;
-}
-/* Join as Creator — outlined indigo pill */
-.sk-nav-creator a[data-testid="stPageLink-NavLink"]{
-  display:inline-flex !important;align-items:center !important;width:fit-content !important;
-  font-family:var(--fb) !important;font-size:13.5px !important;font-weight:700 !important;
-  color:#4F46E5 !important;padding:8px 22px !important;border-radius:999px !important;
-  border:1.5px solid #4F46E5 !important;background:transparent !important;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1) !important;white-space:nowrap !important;letter-spacing:.01em !important;
-}
-.sk-nav-creator a[data-testid="stPageLink-NavLink"]:hover{
-  background:#4F46E5 !important;color:#fff !important;
-  box-shadow:0 4px 14px rgba(79,70,229,.35) !important;transform:scale(1.05) !important;
-}
-/* Join as Business — filled indigo pill */
-.sk-nav-business a[data-testid="stPageLink-NavLink"]{
-  display:inline-flex !important;align-items:center !important;width:fit-content !important;
-  font-family:var(--fb) !important;font-size:13.5px !important;font-weight:700 !important;
-  color:#fff !important;padding:8px 22px !important;border-radius:999px !important;
-  background:linear-gradient(135deg,#4F46E5,#7C3AED) !important;border:1.5px solid transparent !important;
-  box-shadow:0 4px 14px rgba(79,70,229,.35) !important;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1) !important;white-space:nowrap !important;letter-spacing:.01em !important;
-}
-.sk-nav-business a[data-testid="stPageLink-NavLink"]:hover{
-  background:linear-gradient(135deg,#4338CA,#6D28D9) !important;
-  box-shadow:0 6px 22px rgba(79,70,229,.48) !important;transform:scale(1.05) !important;
-  color:#fff !important;
-}
-/* Login — ghost pill with indigo hover */
-.sk-nav-login a[data-testid="stPageLink-NavLink"]{
-  display:inline-flex !important;align-items:center !important;width:fit-content !important;
-  font-family:var(--fb) !important;font-size:13.5px !important;font-weight:700 !important;
-  color:var(--navy) !important;padding:8px 22px !important;border-radius:999px !important;
-  border:1.5px solid var(--border) !important;background:#fff !important;
-  transition:all .22s cubic-bezier(.34,1.56,.64,1) !important;white-space:nowrap !important;
-}
-.sk-nav-login a[data-testid="stPageLink-NavLink"]:hover{
-  background:#EEF2FF !important;border-color:#4F46E5 !important;color:#4F46E5 !important;
-  transform:scale(1.05) !important;box-shadow:0 4px 14px rgba(79,70,229,.18) !important;
-}
-/* Discover link (logged-in nav) */
-.sk-nav-discover a[data-testid="stPageLink-NavLink"]{
-  font-family:var(--fb) !important;font-size:13.5px !important;font-weight:600 !important;
-  color:var(--blue-600) !important;padding:8px 18px !important;border-radius:8px !important;
-  border:1.5px solid var(--blue-100) !important;background:var(--blue-50) !important;
-  transition:all .18s !important;white-space:nowrap !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
     if user:
         role     = user.get("role", "creator")
         username = user.get("username", "")
         icon     = "🎤" if role == "creator" else "💼"
-        # cols: logo | spacer | action-link | user-pill | logout
         logo_col, spacer, action_col, pill_col, logout_col = st.columns([3, 2, 1.8, 2.2, 1.4])
         with logo_col:
             st.markdown('<div class="sk-home-logo"><img src="app/static/skout-logo.png" style="height:46px;width:auto;display:block;max-height:52px"></div>', unsafe_allow_html=True)
@@ -272,23 +189,68 @@ def render_navbar() -> None:
                 _logout()
             st.markdown('</div>', unsafe_allow_html=True)
     else:
-        logo_col, spacer, creator_col, business_col, login_col = st.columns([3, 3, 1.6, 1.6, 1.6])
-        with logo_col:
-            st.markdown('<div class="sk-home-logo"><img src="app/static/skout-logo.png" style="height:46px;width:auto;display:block;max-height:52px"></div>', unsafe_allow_html=True)
-        with spacer:
-            pass
-        with creator_col:
-            st.markdown('<div class="sk-nav-creator">', unsafe_allow_html=True)
-            st.page_link(_P_CREATOR, label="🎤 Join as Creator")
-            st.markdown('</div>', unsafe_allow_html=True)
-        with business_col:
-            st.markdown('<div class="sk-nav-business">', unsafe_allow_html=True)
-            st.page_link(_P_BUSINESS, label="💼 Join as Business")
-            st.markdown('</div>', unsafe_allow_html=True)
-        with login_col:
-            st.markdown('<div class="sk-nav-login">', unsafe_allow_html=True)
-            st.page_link(_P_LOGIN, label="Log in")
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown("""
+<style>
+.sk-navbar{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(255,255,255,.97);
+  border-bottom:1px solid #E2E8F0;
+  box-shadow:0 1px 8px rgba(15,23,42,.06);
+  display:flex;align-items:center;
+  padding:0 clamp(1.5rem,5vw,4rem);min-height:64px;
+  font-family:'Inter','Open Sans',sans-serif;
+}
+.sk-navbar-spacer{flex:1;}
+.sk-navbar-btns{display:flex;align-items:center;gap:8px;}
+.sk-nb-creator{
+  display:inline-flex;align-items:center;
+  background:linear-gradient(135deg,rgba(99,102,241,.11),rgba(139,92,246,.14));
+  color:#4F46E5 !important;text-decoration:none !important;
+  border:1.5px solid rgba(99,102,241,.25);border-radius:999px;
+  padding:8px 22px;font-size:13.5px;font-weight:700;
+  box-shadow:0 4px 16px rgba(99,102,241,.12);
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;letter-spacing:.01em;
+}
+.sk-nb-creator:hover{
+  background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(139,92,246,.26)) !important;
+  border-color:rgba(99,102,241,.42) !important;
+  box-shadow:0 8px 26px rgba(99,102,241,.2) !important;
+  transform:scale(1.05) translateY(-1px);color:#4F46E5 !important;
+}
+.sk-nb-business{
+  display:inline-flex;align-items:center;
+  background:#fff;color:#4F46E5 !important;text-decoration:none !important;
+  border:1.5px solid #E0E7FF;border-radius:999px;
+  padding:8px 22px;font-size:13.5px;font-weight:700;
+  box-shadow:0 2px 8px rgba(99,102,241,.06);
+  transition:all .22s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;letter-spacing:.01em;
+}
+.sk-nb-business:hover{
+  border-color:#C7D2FE !important;
+  box-shadow:0 6px 20px rgba(99,102,241,.13) !important;
+  transform:scale(1.04) translateY(-1px);color:#4F46E5 !important;
+}
+.sk-nb-login{
+  display:inline-flex;align-items:center;
+  background:transparent;color:#9CA3AF !important;text-decoration:none !important;
+  border:none;border-radius:999px;
+  padding:8px 12px;font-size:13.5px;font-weight:600;
+  transition:color .18s;white-space:nowrap;
+}
+.sk-nb-login:hover{color:#4F46E5 !important;}
+</style>
+<div class="sk-navbar">
+  <img src="app/static/skout-logo.png" style="height:46px;width:auto;display:block">
+  <div class="sk-navbar-spacer"></div>
+  <div class="sk-navbar-btns">
+    <a class="sk-nb-creator" href="/Creator_Onboarding" target="_self">Join as Creator</a>
+    <a class="sk-nb-business" href="/Business_Onboarding" target="_self">Join as Business</a>
+    <a class="sk-nb-login" href="/Login" target="_self">Login</a>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 
 def inject_app_css() -> None:
