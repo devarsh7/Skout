@@ -105,6 +105,16 @@ def fetch_instagram_profile(handle: str) -> dict:
     return _req("GET", f"/creators/instagram/{handle.lstrip('@')}")
 
 
+def get_instagram_auth_url() -> dict:
+    """Get a fresh Instagram OAuth URL + state token."""
+    return _req("GET", "/instagram/auth-url")
+
+
+def get_instagram_oauth_data(state: str) -> dict:
+    """Retrieve profile + reel data after OAuth completes (one-time)."""
+    return _req("GET", f"/instagram/data/{state}")
+
+
 def health() -> dict:
     return _req("GET", "/health")
 
@@ -143,6 +153,19 @@ def agent_action_send_outreach(creator_id: str, token: str, campaign_id: str | N
     return _req("POST", "/agent/action/send-outreach",
                 json={"creator_id": creator_id, "campaign_id": campaign_id},
                 headers={"Authorization": f"Bearer {token}"})
+
+
+# ── Creator Agent ─────────────────────────────────────────────────────────────
+
+def creator_agent_chat(message: str, token: str) -> dict:
+    return _req("POST", "/creator-agent/chat",
+                json={"message": message},
+                headers={"Authorization": f"Bearer {token}"})
+
+
+def creator_agent_history(token: str) -> list[dict]:
+    return _req("GET", "/creator-agent/history",
+                headers={"Authorization": f"Bearer {token}"}) or []
 
 
 # ── Local Market Intelligence ─────────────────────────────────────────────────

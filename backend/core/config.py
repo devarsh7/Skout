@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     instagram_app_id: str = ""
     instagram_app_secret: str = ""
     instagram_redirect_uri: str = "http://localhost:8000/instagram/callback"
+    frontend_url: str = "http://localhost:8501"
 
     # --- MCP ---
     mcp_server_host: str = "127.0.0.1"

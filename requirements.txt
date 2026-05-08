@@ -31,6 +31,9 @@ pinecone==5.0.1
 sentence-transformers==3.1.1     # FREE local embeddings (all-MiniLM-L6-v2)
 # openai==1.51.0                  # paid embeddings (also handles LLM below)
 
+# ---------- Anthropic (Creator Agent) ----------
+anthropic>=0.40.0
+
 # ---------- LLM providers ----------
 # Ollama used via REST, so langchain-ollama handles it:
 langchain==0.3.1

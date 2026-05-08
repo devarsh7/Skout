@@ -42,6 +42,7 @@ def init_db() -> None:
     from backend.models import creator, user, campaign  # noqa: F401
     from backend.models import post, benchmark, neighbourhood  # noqa: F401
     from backend.models import agent_conversation  # noqa: F401
+    from backend.models import creator_conversation  # noqa: F401
     from sqlalchemy import inspect, text
 
     Base.metadata.create_all(bind=engine)

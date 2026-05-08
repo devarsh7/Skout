@@ -30,7 +30,7 @@ def _app_token() -> str | None:
 def fetch_profile_via_graph_api(user_access_token: str) -> dict[str, Any]:
     """
     Fetch profile using a user access token obtained via OAuth.
-    Requires instagram_basic permission.
+    Requires instagram_business_basic permission.
     """
     url = "https://graph.instagram.com/me"
     params = {
@@ -52,6 +52,62 @@ def fetch_profile_via_graph_api(user_access_token: str) -> dict[str, Any]:
         "website":          data.get("website", ""),
         "is_private":       False,
     }
+
+
+def fetch_reels_via_graph_api(user_access_token: str, limit: int = 20) -> list[dict[str, Any]]:
+    """
+    Fetch recent reels/videos with per-post metrics.
+    Requires instagram_business_basic + instagram_business_manage_insights.
+    Returns a list of reel dicts sorted by timestamp desc.
+    """
+    url = "https://graph.instagram.com/me/media"
+    params = {
+        "fields": "id,caption,media_type,timestamp,like_count,comments_count,thumbnail_url,media_url,permalink",
+        "limit": limit,
+        "access_token": user_access_token,
+    }
+    resp = httpx.get(url, params=params, timeout=15)
+    resp.raise_for_status()
+    items = resp.json().get("data", [])
+
+    reels = []
+    for item in items:
+        if item.get("media_type") not in ("VIDEO", "REEL"):
+            continue
+        # Fetch video_views separately via insights endpoint
+        views = 0
+        reach = 0
+        try:
+            ins_resp = httpx.get(
+                f"https://graph.instagram.com/{item['id']}/insights",
+                params={
+                    "metric": "video_views,reach,impressions",
+                    "access_token": user_access_token,
+                },
+                timeout=10,
+            )
+            if ins_resp.status_code == 200:
+                for m in ins_resp.json().get("data", []):
+                    if m["name"] == "video_views":
+                        views = m.get("values", [{}])[0].get("value", 0)
+                    elif m["name"] == "reach":
+                        reach = m.get("values", [{}])[0].get("value", 0)
+        except Exception:
+            pass
+
+        reels.append({
+            "id":           item.get("id"),
+            "caption":      (item.get("caption") or "")[:200],
+            "timestamp":    item.get("timestamp"),
+            "likes":        item.get("like_count", 0),
+            "comments":     item.get("comments_count", 0),
+            "video_views":  views,
+            "reach":        reach,
+            "thumbnail":    item.get("thumbnail_url") or item.get("media_url"),
+            "permalink":    item.get("permalink"),
+        })
+
+    return reels
 
 
 # ── Public scrape (best-effort, no auth) ─────────────────────────────────────
@@ -176,10 +232,10 @@ def get_oauth_url() -> str | None:
     if not app_id:
         return None
     return (
-        f"https://api.instagram.com/oauth/authorize"
+        f"https://www.instagram.com/oauth/authorize"
         f"?client_id={app_id}"
         f"&redirect_uri={redirect_uri}"
-        f"&scope=instagram_basic"
+        f"&scope=instagram_business_basic,instagram_business_manage_insights"
         f"&response_type=code"
     )
 

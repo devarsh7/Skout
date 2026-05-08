@@ -9,7 +9,7 @@ from frontend.utils.styles import (
     _P_CREATOR, _P_BUSINESS,
     _P_DISCOVER, _P_FILTER, _P_OUTREACH, _P_CAMPAIGNS,
     _P_MAP, _P_AI_AGENT, _P_CREATOR_MATCH, _P_LOCAL_MARKET,
-    _P_LOGIN, _P_SIGNUP, _P_UPDATE_PROFILE,
+    _P_LOGIN, _P_SIGNUP, _P_UPDATE_PROFILE, _P_CREATOR_AGENT,
 )
 
 _icon = Image.open("frontend/static/skout-logo.png")
@@ -17,6 +17,11 @@ st.set_page_config(page_title="Skout", page_icon=_icon,
                    layout="wide", initial_sidebar_state="collapsed")
 inject_css()
 restore_session()
+
+# If returning from Instagram OAuth, route straight to the onboarding page
+# so the ig_state query param is picked up there.
+if st.query_params.get("ig_state"):
+    st.switch_page(_P_CREATOR)
 
 user = st.session_state.get("user")
 role = user.get("role") if user else None
@@ -43,6 +48,7 @@ if role == "creator":
     pg = st.navigation({
         "Creator Hub": [
             st.Page(_P_CREATOR_DASHBOARD, title="My Dashboard",      icon="🏠", default=True),
+            st.Page(_P_CREATOR_AGENT,     title="Career Manager",     icon="✨"),
             st.Page(_P_UPDATE_PROFILE,    title="Update Profile",     icon="✏️"),
         ],
         "Explore":  _TOOL_PAGES,

@@ -159,6 +159,15 @@ _DCSS = """
 .sc:nth-child(1){animation-delay:.06s}.sc:nth-child(2){animation-delay:.11s}
 .sc:nth-child(3){animation-delay:.16s}.sc:nth-child(4){animation-delay:.21s}
 .sc:nth-child(5){animation-delay:.26s}.sc:nth-child(6){animation-delay:.31s}
+.sc:nth-child(7){animation-delay:.36s}
+.sc-explore{
+  display:inline-block;margin-top:9px;
+  font-size:10px;font-weight:700;letter-spacing:.05em;
+  color:var(--sc,#7C3AED);text-decoration:none !important;
+  padding:3px 11px;border:1.5px solid var(--sc,#7C3AED);border-radius:999px;
+  opacity:.7;transition:opacity .15s,background .15s;
+}
+.sc-explore:hover{opacity:1;background:rgba(124,58,237,.08);}
 .ch {
   background: linear-gradient(135deg,#4338CA 0%,#4F46E5 35%,#6366F1 65%,#818CF8 100%);
   border-radius: 18px; padding: 1rem 1.25rem;
@@ -344,6 +353,14 @@ sc_html = "".join(
     f'</div>'
     for c, ico, val, lbl in sc_data
 )
+sc_html += (
+    '<div class="sc" style="--sc:#7C3AED">'
+    '<div class="sc-icon">✨</div>'
+    '<div class="sc-val">AI</div>'
+    '<div class="sc-lbl">Career Manager</div>'
+    '<a class="sc-explore" href="/Career_Manager" target="_self">Explore →</a>'
+    '</div>'
+)
 
 oc_bg  = "#F0FDF4" if open_c else "#FEF2F2"
 oc_tc  = "#059669" if open_c else "#DC2626"
@@ -392,4 +409,5 @@ st.markdown(f"""
 
 </div>
 """, unsafe_allow_html=True)
+
 

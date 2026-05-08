@@ -6,6 +6,7 @@ import streamlit as st
 
 from frontend.utils.api_client import (
     APIError, fetch_instagram_profile,
+    get_instagram_auth_url, get_instagram_oauth_data,
     send_otp_email, register_creator_verified,
 )
 from frontend.utils.styles import inject_css, _P_CREATOR_DASHBOARD
@@ -189,46 +190,72 @@ with aside:
 
 with main:
 
-    # ── Instagram quick-fill ──────────────────────────────────────────────────
+    # ── Instagram OAuth quick-fill ────────────────────────────────────────────
+    # On page load: check if we're returning from an OAuth redirect
+    ig_state_param = st.query_params.get("ig_state")
+    if ig_state_param and "ig_prefill" not in st.session_state:
+        with st.spinner("Connecting your Instagram…"):
+            try:
+                oauth_data = get_instagram_oauth_data(ig_state_param)
+                profile = oauth_data.get("profile", {})
+                reels   = oauth_data.get("reels", [])
+                if profile.get("found"):
+                    profile["reels"] = reels
+                    st.session_state["ig_prefill"] = profile
+                    st.session_state["ig_token"]   = oauth_data.get("token")
+                st.query_params.clear()
+                st.rerun()
+            except APIError:
+                st.query_params.clear()
+
     pf = st.session_state.get("ig_prefill", {})
     st.markdown(
         '<div class="app-card" style="margin-bottom:16px;border:1.5px solid var(--blue-100);background:var(--blue-50)">'
-        '<span class="app-section-label">⚡ Quick-fill from Instagram</span>'
-        '<div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">'
-        "Enter your Instagram handle and we'll auto-fill your name, bio, and follower count."
+        '<span class="app-section-label">⚡ Connect Instagram to auto-fill</span>'
+        '<div style="font-size:12.5px;color:var(--muted);margin-bottom:12px">'
+        "Connect your Instagram account so Skout can pull your real follower count, bio, and reel stats. "
+        "You'll be redirected to Instagram and brought right back."
         '</div>',
         unsafe_allow_html=True,
     )
-    ig_col, btn_col = st.columns([3, 1])
-    ig_quick_handle = ig_col.text_input(
-        "Instagram handle", placeholder="priyastyles",
-        label_visibility="collapsed", key="ig_quick_handle",
-    )
-    if btn_col.button("🔄 Fetch", use_container_width=True):
-        if not ig_quick_handle.strip():
-            st.warning("Enter your Instagram handle first.")
-        else:
-            with st.spinner("Fetching…"):
-                try:
-                    ig_data = fetch_instagram_profile(ig_quick_handle.strip())
-                    if ig_data.get("found"):
-                        st.session_state["ig_prefill"] = ig_data
-                        st.success(f"✅ Found **{ig_data.get('username')}** — {ig_data.get('followers', 0):,} followers. Fields pre-filled below.")
-                        st.rerun()
-                    else:
-                        err = ig_data.get("error", "Could not fetch profile.")
-                        st.warning(f"⚠️ {err} Fill in manually below.")
-                except APIError as e:
-                    st.warning(f"Could not reach Instagram: {e}. Fill in manually below.")
 
     if pf.get("found"):
+        # Already connected — show summary
+        reels = pf.get("reels", [])
+        avg_views = (
+            int(sum(r.get("video_views", 0) for r in reels) / len(reels))
+            if reels else 0
+        )
         st.markdown(
-            f'<div style="display:flex;align-items:center;gap:10px;margin-top:6px;font-size:12.5px;color:var(--muted)">'
-            f'<span>📸</span>'
-            f'<span><strong style="color:var(--navy)">@{pf.get("username")}</strong> · {pf.get("followers", 0):,} followers</span>'
-            f'</div>',
+            f'<div style="display:flex;align-items:center;gap:12px;padding:10px 0 6px;font-size:13px">'
+            f'<span style="font-size:1.4rem">✅</span>'
+            f'<div>'
+            f'<strong style="color:var(--navy)">@{pf.get("username")}</strong> connected'
+            f'<div style="color:var(--muted);font-size:12px;margin-top:2px">'
+            f'{pf.get("followers", 0):,} followers'
+            + (f' · {len(reels)} reels · {avg_views:,} avg views' if reels else '')
+            + f'</div></div></div>',
             unsafe_allow_html=True,
         )
+        if st.button("🔄 Reconnect", use_container_width=False):
+            st.session_state.pop("ig_prefill", None)
+            st.session_state.pop("ig_token", None)
+            st.rerun()
+    else:
+        # Not yet connected
+        connect_col, _ = st.columns([1, 2])
+        with connect_col:
+            if st.button("📸 Connect Instagram", type="primary", use_container_width=True):
+                try:
+                    auth = get_instagram_auth_url()
+                    st.markdown(
+                        f'<meta http-equiv="refresh" content="0; url={auth["url"]}">',
+                        unsafe_allow_html=True,
+                    )
+                    st.info("Redirecting to Instagram… if nothing happens, [click here](" + auth["url"] + ").")
+                except APIError as e:
+                    st.error(f"Could not start Instagram login: {e}")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
     # ── Main form ─────────────────────────────────────────────────────────────

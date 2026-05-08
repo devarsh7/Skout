@@ -22,6 +22,7 @@ _P_CREATOR_MATCH  = "pages/11_Creator_Match.py"
 _P_LOCAL_MARKET   = "pages/12_Local_Market.py"
 _P_CREATOR_DASHBOARD  = "pages/creator/Dashboard.py"
 _P_UPDATE_PROFILE     = "pages/creator/Update_Profile.py"
+_P_CREATOR_AGENT      = "pages/creator/Career_Manager.py"
 
 _NAV_CORE = [
     ("discover",  _P_DISCOVER,  "🔍 Discover"),

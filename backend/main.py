@@ -14,6 +14,8 @@ from backend.api import agents as agents_router
 from backend.api import agent_chat as agent_chat_router
 from backend.api import auth as auth_router
 from backend.api import creators as creators_router
+from backend.api import creator_agent as creator_agent_router
+from backend.api import instagram as instagram_router
 from backend.api import local as local_router
 from backend.core.config import settings
 from backend.core.database import get_db, init_db
@@ -57,6 +59,8 @@ app.include_router(auth_router.router)
 app.include_router(creators_router.router)
 app.include_router(agents_router.router)
 app.include_router(agent_chat_router.router)
+app.include_router(creator_agent_router.router)
+app.include_router(instagram_router.router)
 app.include_router(local_router.router)
 
 
