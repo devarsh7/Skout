@@ -95,8 +95,8 @@ export default function BusinessOnboarding() {
               <span className="text-white font-bold">S</span>
             </div>
           </Link>
-          <h1 className="text-2xl font-bold text-white mb-1">Join as a Brand</h1>
-          <p className="text-gray-500 text-sm">Start discovering the right creators for your campaigns</p>
+          <h1 className="text-2xl font-bold mb-1" style={{ color: '#1E1B4B' }}>Join as a Brand</h1>
+          <p className="text-sm" style={{ color: '#6B7280' }}>Start discovering the right creators for your campaigns</p>
         </div>
 
         {/* Step indicator */}
@@ -148,7 +148,7 @@ export default function BusinessOnboarding() {
           {step === 'otp' && (
             <form onSubmit={handleVerifyOTP} className="space-y-4">
               <p className="text-[#6B7280] text-sm text-center mb-4">
-                We sent a code to <span className="text-white">{form.email}</span>
+                We sent a code to <span className="font-semibold" style={{ color: '#4F46E5' }}>{form.email}</span>
               </p>
               {devOTP && (
                 <div className="px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-sm text-center">
