@@ -246,12 +246,11 @@ def exchange_code_for_token(code: str) -> str | None:
     redirect_uri = settings.instagram_redirect_uri
     if not (app_id and secret):
         return None
-    resp = httpx.post(
-        "https://api.instagram.com/oauth/access_token",
-        data={
+    resp = httpx.get(
+        "https://graph.facebook.com/v21.0/oauth/access_token",
+        params={
             "client_id":     app_id,
             "client_secret": secret,
-            "grant_type":    "authorization_code",
             "redirect_uri":  redirect_uri,
             "code":          code,
         },

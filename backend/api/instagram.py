@@ -49,7 +49,7 @@ def auth_url():
     _pending[state] = {"data": None, "expires_at": time.time() + _TTL}
 
     url = (
-        "https://www.instagram.com/oauth/authorize"
+        "https://www.facebook.com/dialog/oauth"
         f"?client_id={settings.instagram_app_id}"
         f"&redirect_uri={settings.instagram_redirect_uri}"
         f"&scope=instagram_business_basic"

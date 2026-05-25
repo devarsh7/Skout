@@ -4,6 +4,7 @@ Skout — FastAPI entrypoint.
 Run locally:
     uvicorn backend.main:app --reload --port 8000
 """
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -46,10 +47,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS (Streamlit runs on a different port)
+_origins = (
+    [
+        "https://skoutmarketplace.com",
+        "https://www.skoutmarketplace.com",
+        os.getenv("FRONTEND_URL", ""),
+    ]
+    if settings.app_env == "production"
+    else ["*"]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # tighten in production
+    allow_origins=[o for o in _origins if o],
     allow_methods=["*"],
     allow_headers=["*"],
     allow_credentials=True,
