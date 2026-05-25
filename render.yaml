@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: skout-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: LLM_PROVIDER
+        value: anthropic
+      - key: EMBEDDING_PROVIDER
+        value: local
+      - key: DATABASE_URL
+        fromDatabase:
+          name: skout-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PINECONE_API_KEY
+        sync: false
+      - key: PINECONE_INDEX_NAME
+        value: skout-creators
+      - key: PINECONE_CLOUD
+        value: aws
+      - key: PINECONE_REGION
+        value: us-east-1
+      - key: PINECONE_DIMENSION
+        value: "384"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "1440"
+      - key: FRONTEND_URL
+        value: https://skoutmarketplace.com
+
+databases:
+  - name: skout-db
+    databaseName: skout
+    user: skout
+    plan: free
