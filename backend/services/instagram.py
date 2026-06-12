@@ -43,6 +43,7 @@ def fetch_profile_via_graph_api(user_access_token: str) -> dict[str, Any]:
     return {
         "found":            True,
         "source":           "graph_api",
+        "ig_user_id":       data.get("id", ""),
         "username":         data.get("username", ""),
         "full_name":        data.get("name", ""),
         "bio":              data.get("biography", ""),
@@ -52,6 +53,198 @@ def fetch_profile_via_graph_api(user_access_token: str) -> dict[str, Any]:
         "website":          data.get("website", ""),
         "is_private":       False,
     }
+
+
+def exchange_for_long_lived_token(short_lived_token: str) -> dict[str, Any]:
+    """
+    Exchange a short-lived token (1 hour) for a long-lived token (60 days).
+    https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login
+    """
+    resp = httpx.get(
+        "https://graph.instagram.com/access_token",
+        params={
+            "grant_type":        "ig_exchange_token",
+            "client_secret":     settings.instagram_app_secret,
+            "access_token":      short_lived_token,
+        },
+        timeout=10,
+    )
+    if resp.status_code == 200:
+        return resp.json()  # {access_token, token_type, expires_in}
+    return {"access_token": short_lived_token, "expires_in": 3600}
+
+
+def refresh_long_lived_token(long_lived_token: str) -> dict[str, Any] | None:
+    """
+    Refresh a long-lived token before expiry (must be at least 24h old).
+    Returns new token data or None on failure.
+    """
+    resp = httpx.get(
+        "https://graph.instagram.com/refresh_access_token",
+        params={
+            "grant_type":   "ig_refresh_token",
+            "access_token": long_lived_token,
+        },
+        timeout=10,
+    )
+    if resp.status_code == 200:
+        return resp.json()
+    return None
+
+
+def fetch_all_media(user_access_token: str, limit: int = 50) -> list[dict[str, Any]]:
+    """
+    Fetch all media types (Reels, Carousels, Static, Stories) with per-post metrics.
+    Paginates automatically up to `limit` posts.
+    """
+    url = "https://graph.instagram.com/me/media"
+    params = {
+        "fields": (
+            "id,caption,media_type,timestamp,like_count,comments_count,"
+            "thumbnail_url,media_url,permalink"
+        ),
+        "limit": min(limit, 50),
+        "access_token": user_access_token,
+    }
+    items: list[dict] = []
+
+    while url and len(items) < limit:
+        resp = httpx.get(url, params=params, timeout=15)
+        resp.raise_for_status()
+        data = resp.json()
+        batch = data.get("data", [])
+        items.extend(batch)
+
+        # Pagination
+        next_url = data.get("paging", {}).get("next")
+        url = next_url if next_url and len(items) < limit else None
+        params = {}  # next URL has params embedded
+
+    # Enrich each item with insights (views + reach)
+    enriched = []
+    for item in items[:limit]:
+        media_type = item.get("media_type", "")
+        views = 0
+        reach = 0
+        saves = 0
+        shares = 0
+
+        try:
+            metrics = "reach,saved"
+            if media_type in ("VIDEO", "REEL"):
+                metrics = "reach,saved,views,shares"
+
+            ins_resp = httpx.get(
+                f"https://graph.instagram.com/{item['id']}/insights",
+                params={"metric": metrics, "access_token": user_access_token},
+                timeout=10,
+            )
+            if ins_resp.status_code == 200:
+                for m in ins_resp.json().get("data", []):
+                    name = m["name"]
+                    val  = m.get("values", [{}])[0].get("value", 0) or m.get("value", 0)
+                    if name in ("views", "video_views"):  views = val
+                    elif name == "reach":      reach  = val
+                    elif name == "saved":      saves  = val
+                    elif name == "shares":     shares = val
+        except Exception:
+            pass
+
+        followers_at_post = 0  # would need separate account insights call
+        engagement = 0.0
+        likes    = item.get("like_count", 0) or 0
+        comments = item.get("comments_count", 0) or 0
+        total_eng = likes + comments + saves + shares
+        if reach > 0:
+            engagement = round((total_eng / reach) * 100, 2)
+
+        # Parse hashtags from caption if not returned directly
+        caption = item.get("caption") or ""
+        hashtags = re.findall(r"#\w+", caption)
+
+        # Map media_type to our format labels
+        format_map = {
+            "IMAGE":     "Static",
+            "VIDEO":     "Reel",
+            "REEL":      "Reel",
+            "CAROUSEL_ALBUM": "Carousel",
+        }
+
+        enriched.append({
+            "ig_media_id":   item.get("id"),
+            "caption":       caption[:500],
+            "media_type":    media_type,
+            "format":        format_map.get(media_type, "Static"),
+            "timestamp":     item.get("timestamp"),
+            "likes":         likes,
+            "comments":      comments,
+            "views":         views,
+            "reach":         reach,
+            "saves":         saves,
+            "shares":        shares,
+            "engagement_rate": engagement,
+            "hashtags":      hashtags,
+            "permalink":     item.get("permalink"),
+            "thumbnail":     item.get("thumbnail_url") or item.get("media_url"),
+        })
+
+    return enriched
+
+
+def save_posts_to_db(db, creator_id: str, media_items: list[dict]) -> int:
+    """
+    Upsert media items into the Post table. Returns count of new posts saved.
+    Skips posts already in DB (by ig_media_id stored in permalink as proxy).
+    """
+    from datetime import datetime as dt
+    from backend.models.post import Post
+
+    existing_permalinks = {
+        p.permalink for p in
+        db.query(Post.permalink).filter(Post.creator_id == creator_id).all()
+        if p.permalink
+    } if hasattr(Post, "permalink") else set()
+
+    new_count = 0
+    for item in media_items:
+        permalink = item.get("permalink")
+
+        # Skip if already stored (simple dedup)
+        if permalink and permalink in existing_permalinks:
+            continue
+
+        timestamp = None
+        if item.get("timestamp"):
+            try:
+                timestamp = dt.fromisoformat(item["timestamp"].replace("Z", "+00:00"))
+            except Exception:
+                pass
+
+        post = Post(
+            creator_id      = creator_id,
+            platform        = "instagram",
+            format          = item.get("format", "Static"),
+            posted_at       = timestamp,
+            likes           = item.get("likes", 0),
+            comments        = item.get("comments", 0),
+            views           = item.get("views", 0),
+            engagement_rate = item.get("engagement_rate", 0.0),
+            caption_sample  = (item.get("caption") or "")[:500],
+            hashtags        = item.get("hashtags", []),
+            has_location_tag = bool(item.get("hashtags") and any(
+                tag.lower() in (item.get("caption") or "").lower()
+                for tag in item.get("hashtags", [])
+            )),
+        )
+        # Store permalink if the model has it; otherwise skip
+        if hasattr(Post, "permalink"):
+            post.permalink = permalink
+
+        db.add(post)
+        new_count += 1
+
+    db.flush()
+    return new_count
 
 
 def fetch_reels_via_graph_api(user_access_token: str, limit: int = 20) -> list[dict[str, Any]]:
@@ -81,14 +274,14 @@ def fetch_reels_via_graph_api(user_access_token: str, limit: int = 20) -> list[d
             ins_resp = httpx.get(
                 f"https://graph.instagram.com/{item['id']}/insights",
                 params={
-                    "metric": "video_views,reach,impressions",
+                    "metric": "views,reach",
                     "access_token": user_access_token,
                 },
                 timeout=10,
             )
             if ins_resp.status_code == 200:
                 for m in ins_resp.json().get("data", []):
-                    if m["name"] == "video_views":
+                    if m["name"] in ("views", "video_views"):
                         views = m.get("values", [{}])[0].get("value", 0)
                     elif m["name"] == "reach":
                         reach = m.get("values", [{}])[0].get("value", 0)
@@ -241,16 +434,22 @@ def get_oauth_url() -> str | None:
 
 
 def exchange_code_for_token(code: str) -> str | None:
+    """
+    Exchange the OAuth code for a short-lived token.
+    Instagram Business Login requires a POST (form-encoded) to api.instagram.com.
+    https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login
+    """
     app_id       = settings.instagram_app_id
     secret       = settings.instagram_app_secret
     redirect_uri = settings.instagram_redirect_uri
     if not (app_id and secret):
         return None
-    resp = httpx.get(
-        "https://graph.facebook.com/v21.0/oauth/access_token",
-        params={
+    resp = httpx.post(
+        "https://api.instagram.com/oauth/access_token",
+        data={
             "client_id":     app_id,
             "client_secret": secret,
+            "grant_type":    "authorization_code",
             "redirect_uri":  redirect_uri,
             "code":          code,
         },
