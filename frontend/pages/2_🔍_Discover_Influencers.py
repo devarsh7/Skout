@@ -98,7 +98,7 @@ with col_q:
         "Describe what you're looking for",
         value=st.session_state["disc_query"],
         height=88,
-        placeholder="e.g. beauty creators in Mumbai with a Gen-Z female audience, 50K–500K followers",
+        placeholder="e.g. beauty creators in Toronto with a Gen-Z female audience, 50K–500K followers",
         label_visibility="collapsed",
     )
     query = query or st.session_state["disc_query"]

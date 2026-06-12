@@ -157,7 +157,7 @@ try:
 except APIError:
     city_list = []
 
-city_options = sorted(set(city_list)) if city_list else ["Toronto", "New York", "London", "Mumbai"]
+city_options = sorted(set(city_list)) if city_list else ["Toronto", "New York", "London", "Vancouver"]
 
 # ── 4 tabs ─────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4 = st.tabs([
@@ -395,8 +395,8 @@ with tab3:
 
     nh_city = st.selectbox(
         "City",
-        ["Toronto", "New York", "Los Angeles", "London", "Mumbai", "Sydney", "Berlin", "Singapore"]
-        + sorted(set(city_options) - {"Toronto", "New York", "Los Angeles", "London", "Mumbai"}),
+        ["Toronto", "New York", "Los Angeles", "London", "Vancouver", "Sydney", "Berlin", "Singapore"]
+        + sorted(set(city_options) - {"Toronto", "New York", "Los Angeles", "London", "Vancouver"}),
         key="nh_city",
     )
 

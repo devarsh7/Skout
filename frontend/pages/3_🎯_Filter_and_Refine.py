@@ -105,7 +105,7 @@ with left:
         "Audience country focus",
         ["US", "IN", "GB", "BR", "DE", "FR", "CA", "AU", "JP", "MX"],
     )
-    cities = st.text_input("Cities", placeholder="Mumbai, Berlin, Austin")
+    cities = st.text_input("Cities", placeholder="Toronto, Berlin, Austin")
 
     min_f, max_f = st.select_slider(
         "Follower range",

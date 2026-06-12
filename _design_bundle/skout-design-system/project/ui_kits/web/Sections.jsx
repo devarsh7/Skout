@@ -2,7 +2,7 @@
 const { useState, useEffect } = React;
 
 const HERO_CREATORS = [
-  { handle: '@priyastyles', niche: 'Beauty · Mumbai', followers: '124K', er: '4.8%', hue: 340, emoji: '💄', score: '0.91' },
+  { handle: '@priyastyles', niche: 'Beauty · Toronto', followers: '124K', er: '4.8%', hue: 340, emoji: '💄', score: '0.91' },
   { handle: '@berlinbytes', niche: 'Tech · Berlin',   followers: '58K',  er: '6.2%', hue: 260, emoji: '💻', score: '0.86' },
   { handle: '@maya.cooks',  niche: 'Food · Austin',   followers: '215K', er: '4.1%', hue: 30,  emoji: '🍳', score: '0.82' },
   { handle: '@okanodog',    niche: 'Pets · Toronto',  followers: '42K',  er: '7.0%', hue: 150, emoji: '🐕', score: '0.78' },

@@ -268,9 +268,9 @@ with main:
         display_name = c2.text_input("Display name",                                       placeholder="@priyastyles")
         email        = c3.text_input("Email *",                                            placeholder="priya@example.com")
         c4, c5, c6 = st.columns(3)
-        phone   = c4.text_input("Phone",             placeholder="+1 555 123 4567")
-        country = c5.text_input("Country (ISO-2) *", max_chars=2, placeholder="IN").upper()
-        city    = c6.text_input("City",              placeholder="Mumbai")
+        phone   = c4.text_input("Phone",             placeholder="+1 416 555 1234")
+        country = c5.text_input("Country (ISO-2) *", max_chars=2, placeholder="CA").upper()
+        city    = c6.text_input("City",              placeholder="Toronto")
         st.markdown("</div>", unsafe_allow_html=True)
 
         # ── Socials ──
@@ -327,7 +327,7 @@ with main:
         st.markdown('<div class="app-card" style="margin-bottom:16px"><span class="app-section-label">Bio</span>', unsafe_allow_html=True)
         bio = st.text_area(
             "Short bio", value=pf.get("bio", ""), height=100, label_visibility="collapsed",
-            placeholder="Mumbai-based beauty creator focused on clean, cruelty-free skincare.",
+            placeholder="Toronto-based beauty creator focused on clean, cruelty-free skincare.",
         )
         st.markdown("</div>", unsafe_allow_html=True)
 

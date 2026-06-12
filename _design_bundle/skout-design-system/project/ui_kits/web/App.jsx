@@ -4,8 +4,8 @@ const { useState, useEffect } = React;
 // --- Mock creator data (shape matches the real API) ---
 const CREATORS = [
   {
-    id: 'c_001', display_name: '@priyastyles', bio: 'Mumbai-based beauty creator focusing on clean, cruelty-free skincare. Community of Gen-Z women interested in sustainable routines.',
-    niches: ['beauty', 'sustainability', 'lifestyle'], city: 'Mumbai', country: 'IN',
+    id: 'c_001', display_name: '@priyastyles', bio: 'Toronto-based beauty creator focusing on clean, cruelty-free skincare. Community of Gen-Z women interested in sustainable routines.',
+    niches: ['beauty', 'sustainability', 'lifestyle'], city: 'Toronto', country: 'CA',
     total_followers: 124000, avg_engagement_rate: 0.0482, email: 'priya@example.com',
     handles: { instagram: 'priyastyles', tiktok: 'priyastyles', youtube: 'https://youtube.com/@priyastyles' },
   },
@@ -301,7 +301,7 @@ function OnboardingPage() {
             <NumberField label="Avg views per post" value={0} step={100} />
             <NumberField label="Min rate (USD)" value={0} step={50} />
           </div>
-          <Input type="textarea" label="Short bio" placeholder="Mumbai-based beauty creator focusing on clean, cruelty-free skincare." />
+          <Input type="textarea" label="Short bio" placeholder="Toronto-based beauty creator focusing on clean, cruelty-free skincare." />
           <div style={{ marginTop: 14 }}>
             <Checkbox label="I consent to Skout storing this profile and making it discoverable to brands." checked={consent} onChange={setConsent} />
           </div>
