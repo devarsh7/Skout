@@ -14,6 +14,7 @@ Flow
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from loguru import logger
@@ -26,6 +27,28 @@ from backend.schemas.agent import AgentHit, AgentResponse, DiscoveryRequest
 from backend.services.creator_service import get_many
 from backend.services.llm_service import get_llm
 from backend.services.vector_store import get_vector_store
+
+
+# Tokens that add no signal — drop them before matching.
+_STOP_WORDS: set[str] = {
+    "a", "an", "the", "and", "or", "but", "with", "for", "from", "in", "on", "at",
+    "of", "to", "by", "as", "is", "are", "was", "were", "be", "been", "being",
+    "who", "that", "this", "these", "those", "any", "all", "some", "more", "most",
+    "i", "me", "my", "our", "we", "you", "your", "us",
+    "want", "need", "find", "looking", "show", "get", "give", "please",
+    "creator", "creators", "influencer", "influencers", "micro", "macro",
+    "brand", "brands", "campaign", "campaigns",
+}
+
+
+def _tokenize(query: str) -> list[str]:
+    """Lowercase, split on non-alphanum, drop stopwords + short tokens, dedupe."""
+    tokens: list[str] = []
+    for raw in re.split(r"[^a-zA-Z0-9]+", query.lower()):
+        if len(raw) >= 2 and raw not in _STOP_WORDS:
+            tokens.append(raw)
+    # dedupe preserving order
+    return list(dict.fromkeys(tokens))
 
 
 _PARSE_PROMPT = """You are Skout's creator-discovery copilot.
@@ -100,24 +123,79 @@ class DiscoveryAgent:
         )
 
     def _sql_fallback(self, db: Session, req: DiscoveryRequest) -> AgentResponse:
-        """Return creators from SQL ordered by followers when Pinecone is unavailable."""
-        rows = (
+        """Keyword-based fallback when Pinecone is unavailable.
+
+        Tokenises the query, matches tokens against display_name / full_name /
+        bio / niches / city / country / languages, and ranks by token-hit count
+        (tie-break: total followers). Returns top_k.
+
+        Falls back to follower-sorted list only when the query has no usable
+        tokens (e.g. all stopwords).
+        """
+        tokens = _tokenize(req.query)
+        candidates = (
             db.query(Creator)
             .filter(Creator.open_to_collabs == True)  # noqa: E712
-            .order_by(Creator.total_followers.desc())
-            .limit(req.top_k)
             .all()
         )
+
+        if not tokens:
+            top = sorted(
+                candidates,
+                key=lambda c: (c.total_followers or 0),
+                reverse=True,
+            )[: req.top_k]
+            results = [
+                AgentHit(score=0.0, creator=c.to_public_dict()) for c in top
+            ]
+            return AgentResponse(
+                agent="discovery",
+                total=len(results),
+                results=results,
+                explanation=(
+                    "No specific keywords detected — showing top creators by reach. "
+                    "Try a more descriptive brief (e.g. 'vegan fitness creators in LA')."
+                ),
+            )
+
+        scored: list[tuple[int, Creator]] = []
+        for c in candidates:
+            haystack = " ".join(
+                [
+                    c.display_name or "",
+                    c.full_name or "",
+                    c.bio or "",
+                    " ".join(c.niches or []),
+                    c.city or "",
+                    c.country or "",
+                    " ".join(c.languages or []),
+                ]
+            ).lower()
+            hits = sum(1 for t in tokens if t in haystack)
+            if hits:
+                scored.append((hits, c))
+
+        scored.sort(
+            key=lambda x: (x[0], (x[1].total_followers or 0)),
+            reverse=True,
+        )
+        top = scored[: req.top_k]
         results = [
-            AgentHit(score=1.0, creator=c.to_public_dict()) for c in rows
+            AgentHit(
+                score=round(hits / len(tokens), 2),
+                reason=f"Matched {hits} of {len(tokens)} keyword(s)",
+                creator=c.to_public_dict(),
+            )
+            for hits, c in top
         ]
         return AgentResponse(
             agent="discovery",
             total=len(results),
             results=results,
             explanation=(
-                "Semantic search unavailable (Pinecone not configured). "
-                f"Showing {len(results)} creators sorted by follower count."
+                f"Keyword search matched {len(results)} of {len(candidates)} "
+                f"creators on: {', '.join(tokens)}. "
+                "Enable Pinecone for true semantic search."
             ),
         )
 
