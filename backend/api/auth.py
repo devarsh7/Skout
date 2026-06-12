@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Optional
 
 import fastapi
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr, field_validator
 from sqlalchemy.orm import Session
 
@@ -91,6 +91,8 @@ class RegisterCreatorRequest(BaseModel):
     min_rate_usd:           float = 0.0
     open_to_collabs:        bool = True
     preferred_collab_types: list[str] = []
+    # set when the user connected Instagram during onboarding (long-lived token)
+    instagram_access_token: Optional[str] = None
 
 
 class RegisterBusinessRequest(BaseModel):
@@ -180,8 +182,38 @@ def send_otp_endpoint(body: SendOTPRequest):
     return {"message": "OTP sent (dev mode — email not configured).", "dev_otp": otp}
 
 
+def _sync_instagram_posts(creator_id: str, access_token: str) -> None:
+    """Background task: pull all media + insights into the Post table.
+    Runs after registration so the response stays fast."""
+    from loguru import logger
+    from backend.core.database import SessionLocal
+    from backend.models.creator import Creator
+    from backend.services.instagram import fetch_all_media, save_posts_to_db
+
+    db = SessionLocal()
+    try:
+        media = fetch_all_media(access_token, limit=50)
+        saved = save_posts_to_db(db, creator_id, media)
+        # Recompute engagement from real post data
+        creator = db.query(Creator).filter(Creator.id == creator_id).first()
+        if creator:
+            from backend.api.instagram import _update_creator_engagement
+            _update_creator_engagement(db, creator)
+        db.commit()
+        logger.info(f"Onboarding post sync: saved {saved} posts for creator {creator_id}")
+    except Exception as exc:
+        logger.warning(f"Onboarding post sync failed for creator {creator_id}: {exc}")
+        db.rollback()
+    finally:
+        db.close()
+
+
 @router.post("/register-creator", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
-def register_creator(body: RegisterCreatorRequest, db: Session = Depends(get_db)):
+def register_creator(
+    body: RegisterCreatorRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     """Verify OTP then atomically create creator profile + user account (already verified)."""
     from backend.core import otp_store
     from backend.schemas.creator import CreatorOnboard
@@ -229,6 +261,19 @@ def register_creator(body: RegisterCreatorRequest, db: Session = Depends(get_db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+    # Persist Instagram token if the user connected during onboarding
+    if body.instagram_access_token:
+        from datetime import datetime, timedelta
+        creator.instagram_access_token = body.instagram_access_token
+        creator.instagram_token_expires_at = datetime.utcnow() + timedelta(days=60)
+        try:
+            from backend.services.instagram import fetch_profile_via_graph_api
+            profile = fetch_profile_via_graph_api(body.instagram_access_token)
+            if profile.get("found"):
+                creator.instagram_user_id = profile.get("ig_user_id")
+        except Exception:
+            pass  # token saved; user id can be backfilled on next sync
+
     user = User(
         username=username,
         email=body.email,
@@ -240,6 +285,13 @@ def register_creator(body: RegisterCreatorRequest, db: Session = Depends(get_db)
     db.add(user)
     db.commit()
     db.refresh(user)
+
+    # Pull post metadata (likes, comments, reach, formats, hashtags) in the
+    # background — this powers engagement rates, benchmarks, and filtering.
+    if body.instagram_access_token:
+        background_tasks.add_task(
+            _sync_instagram_posts, creator.id, body.instagram_access_token
+        )
 
     return AuthResponse(
         user_id=user.id,

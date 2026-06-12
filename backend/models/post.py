@@ -47,6 +47,9 @@ class Post(Base):
     country: Mapped[str | None] = mapped_column(String(2))
     has_location_tag: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    # Instagram-specific
+    permalink: Mapped[str | None] = mapped_column(String(255), nullable=True, index=True)  # for dedup
+
     # NLP source material
     caption_sample: Mapped[str | None] = mapped_column(Text)
     hashtags:       Mapped[list[str]]  = mapped_column(JSON, default=list)

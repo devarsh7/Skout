@@ -43,6 +43,8 @@ def init_db() -> None:
     from backend.models import post, benchmark, neighbourhood  # noqa: F401
     from backend.models import agent_conversation  # noqa: F401
     from backend.models import creator_conversation  # noqa: F401
+    from backend.models import brand_fact  # noqa: F401
+    from backend.models import oauth_state  # noqa: F401
     from sqlalchemy import inspect, text
 
     Base.metadata.create_all(bind=engine)
@@ -67,6 +69,7 @@ def init_db() -> None:
             ("location_sources",        "TEXT"),
             ("location_tags_confirmed", "BOOLEAN DEFAULT 0"),
             ("nlp_location_confirmed",  "BOOLEAN DEFAULT 0"),
+            ("voice_description",       "TEXT"),
         ]:
             if col not in existing_creators:
                 conn.execute(text(f"ALTER TABLE creators ADD COLUMN {col} {ddl}"))

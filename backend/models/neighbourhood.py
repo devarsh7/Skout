@@ -70,14 +70,6 @@ NEIGHBOURHOOD_SEEDS: list[tuple[str, str, str]] = [
     ("London",        "GB", "Peckham"),
     ("London",        "GB", "Dalston"),
 
-    ("Mumbai",        "IN", "Bandra"),
-    ("Mumbai",        "IN", "Colaba"),
-    ("Mumbai",        "IN", "Juhu"),
-    ("Mumbai",        "IN", "Andheri"),
-    ("Mumbai",        "IN", "Lower Parel"),
-    ("Mumbai",        "IN", "Worli"),
-    ("Mumbai",        "IN", "Powai"),
-
     ("Sydney",        "AU", "Newtown"),
     ("Sydney",        "AU", "Surry Hills"),
     ("Sydney",        "AU", "Bondi"),

@@ -36,7 +36,23 @@ async def lifespan(app: FastAPI):
             logger.info(f"Seeded {n} neighbourhoods.")
     finally:
         db.close()
+
+    # Daily Instagram token refresh (4 AM). With multiple workers, ensure
+    # only one process runs the scheduler.
+    scheduler = None
+    try:
+        from apscheduler.schedulers.background import BackgroundScheduler
+        from backend.services.instagram_maintenance import refresh_expiring_tokens
+        scheduler = BackgroundScheduler()
+        scheduler.add_job(refresh_expiring_tokens, "cron", hour=4, minute=0)
+        scheduler.start()
+        logger.info("Instagram token refresh scheduler started (daily 04:00).")
+    except ImportError:
+        logger.warning("APScheduler not installed — Instagram token refresh job disabled.")
+
     yield
+    if scheduler:
+        scheduler.shutdown(wait=False)
     logger.info("Shutting down.")
 
 

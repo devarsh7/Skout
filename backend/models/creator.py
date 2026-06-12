@@ -59,10 +59,19 @@ class Creator(Base):
     audience_gender_split: Mapped[dict] = mapped_column(JSON, default=dict)  # {"f": 0.7, "m": 0.3}
 
     # Match intelligence fields
-    audience_location_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # {"Mumbai": 45, "Delhi": 25}
+    audience_location_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)  # {"Toronto": 45, "Vancouver": 25}
     content_categories: Mapped[dict | None] = mapped_column(JSON, nullable=True)      # {"food": 72, "lifestyle": 18}
     authenticity_score: Mapped[float | None] = mapped_column(Float, nullable=True)    # 0-100
     availability_status: Mapped[str | None] = mapped_column(String(20), nullable=True)  # available|busy|inactive
+
+    # Instagram OAuth token (long-lived, 60-day, refreshed automatically)
+    instagram_access_token: Mapped[str | None] = mapped_column(Text, nullable=True)
+    instagram_token_expires_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    instagram_user_id: Mapped[str | None] = mapped_column(String(40), nullable=True)  # IG numeric user ID
+
+    # Voice / tone fingerprint — short text profile of how this creator writes.
+    # Extracted by tone_service from captions or onboarding samples.
+    voice_description: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Hyperlocal fields
     neighbourhood: Mapped[str | None] = mapped_column(String(120), nullable=True)  # self-reported sub-area
