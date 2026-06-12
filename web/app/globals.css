@@ -85,3 +85,53 @@ body {
     @apply text-[10px] font-bold tracking-[0.12em] uppercase text-[#9CA3AF] block mb-3;
   }
 }
+
+/* ───────────── Animations ───────────── */
+
+@keyframes skout-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes skout-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes skout-pop {
+  0%   { opacity: 0; transform: scale(0.94); }
+  60%  { opacity: 1; transform: scale(1.03); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes skout-count-glow {
+  0%   { text-shadow: 0 0 0 rgba(124, 58, 237, 0); }
+  50%  { text-shadow: 0 0 18px rgba(124, 58, 237, 0.35); }
+  100% { text-shadow: 0 0 0 rgba(124, 58, 237, 0); }
+}
+@keyframes skout-gradient-pan {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+@keyframes skout-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-up   { animation: skout-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in   { animation: skout-fade-in 0.4s ease-out both; }
+.animate-pop       { animation: skout-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-count-glow{ animation: skout-count-glow 1.4s ease-out both; }
+.animate-gradient  {
+  background-size: 200% 200%;
+  animation: skout-gradient-pan 6s ease-in-out infinite alternate;
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #EEF2FF 0%, #F8FAFF 50%, #EEF2FF 100%);
+  background-size: 200% 100%;
+  animation: skout-shimmer 1.6s linear infinite;
+}
+
+.delay-1 { animation-delay: 0.05s; }
+.delay-2 { animation-delay: 0.10s; }
+.delay-3 { animation-delay: 0.15s; }
+.delay-4 { animation-delay: 0.20s; }
+.delay-5 { animation-delay: 0.25s; }
+.delay-6 { animation-delay: 0.30s; }
