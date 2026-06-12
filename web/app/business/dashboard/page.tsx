@@ -97,20 +97,6 @@ export default function BusinessDashboard() {
           </div>
         </div>
 
-        {/* Stat strip */}
-        <div className="relative mt-5 flex gap-6 border-t pt-5" style={{ borderColor: 'rgba(255,255,255,.12)' }}>
-          {[
-            { label: 'Searches', value: '∞' },
-            { label: 'Creators Indexed', value: '50K+' },
-            { label: 'AI Models', value: '3' },
-            { label: 'Outreach Tools', value: '4' },
-          ].map(s => (
-            <div key={s.label}>
-              <div className="text-[1.3rem] font-black text-white" style={{ letterSpacing: '-0.02em' }}>{s.value}</div>
-              <div className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,.55)' }}>{s.label}</div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Profile incomplete prompt */}

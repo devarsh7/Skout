@@ -9,6 +9,7 @@ import { Search, Loader2 } from 'lucide-react'
 export default function DiscoverPage() {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Creator[]>([])
+  const [explanation, setExplanation] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [searched, setSearched] = useState(false)
@@ -21,9 +22,12 @@ export default function DiscoverPage() {
     setSearched(true)
     try {
       const res = await discover(query.trim(), 20)
-      setResults(res.creators || [])
+      setResults(res.creators)
+      setExplanation(res.explanation ?? null)
     } catch {
       setError('Search failed. Make sure the API is running.')
+      setResults([])
+      setExplanation(null)
     } finally {
       setLoading(false)
     }
@@ -39,18 +43,18 @@ export default function DiscoverPage() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white mb-1">Discover Creators</h1>
-        <p className="text-gray-500">Describe who you're looking for in plain English.</p>
+        <h1 className="text-2xl font-bold text-[#1E1B4B] mb-1">Discover Creators</h1>
+        <p className="text-[#6B7280] text-sm">Describe who you’re looking for in plain English. Our AI handles the rest.</p>
       </div>
 
       <form onSubmit={handleSearch} className="mb-6">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#9CA3AF]" />
             <input
               type="text"
               className="input pl-12 py-4 text-base"
-              placeholder="e.g. fashion micro-influencers in London with high engagement..."
+              placeholder="e.g. fashion micro-influencers in London with high engagement…"
               value={query}
               onChange={e => setQuery(e.target.value)}
             />
@@ -63,13 +67,13 @@ export default function DiscoverPage() {
 
       {!searched && (
         <div className="mb-8">
-          <p className="text-gray-500 text-sm mb-3">Try these examples:</p>
+          <p className="text-[#6B7280] text-sm mb-3">Try these examples:</p>
           <div className="flex flex-wrap gap-2">
             {examples.map(ex => (
               <button
                 key={ex}
                 onClick={() => setQuery(ex)}
-                className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs hover:text-white hover:border-white/20 transition-colors"
+                className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-[#6B7280] text-xs hover:border-[#C7D2FE] hover:text-[#4F46E5] transition-colors"
               >
                 {ex}
               </button>
@@ -79,7 +83,7 @@ export default function DiscoverPage() {
       )}
 
       {error && (
-        <div className="mb-6 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div className="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
           {error}
         </div>
       )}
@@ -87,25 +91,30 @@ export default function DiscoverPage() {
       {loading && (
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <Loader2 className="w-8 h-8 animate-spin text-violet-500 mx-auto mb-3" />
-            <p className="text-gray-500 text-sm">AI is searching for the best matches…</p>
+            <Loader2 className="w-8 h-8 animate-spin text-[#4F46E5] mx-auto mb-3" />
+            <p className="text-[#6B7280] text-sm">AI is searching for the best matches…</p>
           </div>
         </div>
       )}
 
       {!loading && searched && results.length === 0 && (
-        <div className="text-center py-20">
-          <p className="text-gray-500">No creators found for this query. Try a different description.</p>
+        <div className="text-center py-20 text-[#6B7280]">
+          No creators found for this query. Try a broader description, or seed more demo creators.
         </div>
       )}
 
       {!loading && results.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-5">
-            <p className="text-gray-400 text-sm">
-              Found <span className="text-white font-semibold">{results.length}</span> creators
+            <p className="text-[#6B7280] text-sm">
+              Found <span className="text-[#1E1B4B] font-semibold">{results.length}</span> {results.length === 1 ? 'creator' : 'creators'}
             </p>
           </div>
+          {explanation && (
+            <div className="mb-4 px-4 py-3 rounded-xl bg-[#EEF2FF] border border-[#C7D2FE] text-[#4F46E5] text-sm">
+              {explanation}
+            </div>
+          )}
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
             {results.map(c => (
               <CreatorCard key={c.id} creator={c} />
