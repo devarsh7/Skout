@@ -32,6 +32,22 @@ _SYSTEM = (
     "helpful friend who knows marketing."
 )
 
+# When True, the agent uses a tool-calling loop (discover_creators, filter, draft,
+# benchmark, save_fact, etc.) instead of keyword intent detection.
+_TOOL_LOOP_ENABLED = True
+
+_TOOL_SYSTEM_ADDENDUM = (
+    "\n\nYou have tools. Use them aggressively:\n"
+    "- For 'find X creators', call discover_creators with the user's exact words.\n"
+    "- For 'narrow down' or 'only the X', call filter_creators on the previous result.\n"
+    "- Before recommending a budget, call get_local_benchmark.\n"
+    "- For 'message / reach out / draft', call draft_outreach_message.\n"
+    "- When the user states a budget, preference, or constraint, call save_brand_fact "
+    "  so you remember it next time.\n"
+    "- Chain tools when needed (e.g. discover → filter → draft).\n"
+    "- Never invent creators or numbers — only use tool results."
+)
+
 # ── Intent detection ──────────────────────────────────────────────────────────
 
 _INTENT_KEYWORDS: dict[str, list[str]] = {
@@ -270,19 +286,20 @@ def chat(db: Session, smb_id: str, user_message: str) -> dict:
     meta = user.profile_meta or {}
     intent = detect_intent(user_message)
 
-    # Build context blocks
+    # Build context blocks (only used by the legacy non-tool path)
     creators_ctx: list[dict] = []
     context_block = ""
 
-    if intent in ("find_creator", "send_outreach"):
-        creators_ctx = _creator_context(db, user, user_message)
-        if creators_ctx:
-            context_block = "\n\nMATCHING CREATORS (JSON):\n" + json.dumps(creators_ctx, indent=2)
+    if not _TOOL_LOOP_ENABLED:
+        if intent in ("find_creator", "send_outreach"):
+            creators_ctx = _creator_context(db, user, user_message)
+            if creators_ctx:
+                context_block = "\n\nMATCHING CREATORS (JSON):\n" + json.dumps(creators_ctx, indent=2)
 
-    elif intent == "analyze_campaign":
-        campaigns = _campaign_context(db, smb_id)
-        if campaigns:
-            context_block = "\n\nCAMPAIGN DATA (JSON):\n" + json.dumps(campaigns, indent=2)
+        elif intent == "analyze_campaign":
+            campaigns = _campaign_context(db, smb_id)
+            if campaigns:
+                context_block = "\n\nCAMPAIGN DATA (JSON):\n" + json.dumps(campaigns, indent=2)
 
     smb_block = (
         "\n\nSMB PROFILE:"
@@ -294,7 +311,13 @@ def chat(db: Session, smb_id: str, user_message: str) -> dict:
         f"\n- Categories: {', '.join(meta.get('target_categories') or [])}"
     )
 
-    system_content = _SYSTEM + smb_block + context_block
+    # Injected durable facts from past conversations
+    from backend.services import brand_facts_service
+    facts_block = brand_facts_service.build_facts_block(db, smb_id)
+
+    system_content = _SYSTEM + smb_block + facts_block + context_block
+    if _TOOL_LOOP_ENABLED:
+        system_content += _TOOL_SYSTEM_ADDENDUM
 
     # Load last 18 turns (9 exchanges)
     history = (
@@ -311,8 +334,27 @@ def chat(db: Session, smb_id: str, user_message: str) -> dict:
         messages.append({"role": h.role, "content": h.content})
     messages.append({"role": "user", "content": user_message})
 
-    response_text = _call_llm(messages)
+    tool_trace: list[dict] = []
+    response_text: str
+
+    if _TOOL_LOOP_ENABLED:
+        try:
+            from backend.agents.tool_loop import run_tool_loop
+            loop_result = run_tool_loop(db, smb_id, messages)
+            response_text = loop_result["content"]
+            tool_trace    = loop_result["tool_trace"]
+        except Exception as exc:
+            logger.warning(f"Tool loop failed, falling back to legacy path: {exc}")
+            response_text = _call_llm(messages)
+    else:
+        response_text = _call_llm(messages)
+
     action_data = _build_action_data(intent, creators_ctx, response_text)
+    if tool_trace:
+        action_data = {
+            **(action_data or {}),
+            "tool_trace": tool_trace,
+        }
 
     # Persist both turns
     db.add(AgentConversation(smb_id=smb_id, role="user", content=user_message, intent=intent))
@@ -325,6 +367,18 @@ def chat(db: Session, smb_id: str, user_message: str) -> dict:
     db.add(assistant_row)
     db.commit()
     db.refresh(assistant_row)
+
+    # Fire-and-forget fact extraction — never fails the request
+    try:
+        snippet = (
+            f"User: {user_message}\n"
+            f"Assistant: {response_text}"
+        )
+        new_facts = brand_facts_service.extract_facts(snippet)
+        if new_facts:
+            brand_facts_service.upsert_facts(db, smb_id, new_facts, source="chat")
+    except Exception as exc:
+        logger.warning(f"Brand-fact extraction failed (non-fatal): {exc}")
 
     return assistant_row.to_dict()
 

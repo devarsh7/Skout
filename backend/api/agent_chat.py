@@ -174,3 +174,46 @@ def send_outreach(
         "creator": creator_name,
         "message": f"Outreach recorded for {creator_name}.",
     }
+
+
+# ── Brand-fact memory ─────────────────────────────────────────────────────────
+
+class AddFactRequest(BaseModel):
+    fact: str
+    category: str = "other"
+
+
+@router.get("/facts")
+def list_facts(
+    db: Session = Depends(get_db),
+    smb_id: str = Depends(_auth),
+):
+    from backend.services import brand_facts_service
+    rows = brand_facts_service.list_all_facts(db, smb_id)
+    return {"facts": [r.to_dict() for r in rows]}
+
+
+@router.post("/facts")
+def add_fact(
+    req: AddFactRequest,
+    db: Session = Depends(get_db),
+    smb_id: str = Depends(_auth),
+):
+    from backend.services import brand_facts_service
+    if not req.fact or len(req.fact.strip()) < 3:
+        raise HTTPException(status_code=400, detail="Fact text required (3+ chars).")
+    row = brand_facts_service.add_manual_fact(db, smb_id, req.fact.strip(), req.category)
+    return row.to_dict()
+
+
+@router.delete("/facts/{fact_id}")
+def delete_fact(
+    fact_id: str,
+    db: Session = Depends(get_db),
+    smb_id: str = Depends(_auth),
+):
+    from backend.services import brand_facts_service
+    ok = brand_facts_service.delete_fact(db, smb_id, fact_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Fact not found")
+    return {"deleted": True}

@@ -74,6 +74,9 @@ def _build_system_prompt(creator: Creator, completed_deals: int) -> str:
     audience_gender = _audience_gender(creator.audience_gender_split)
     audience_age = creator.audience_age_range or "not set"
 
+    from backend.services import tone_service
+    voice_block = tone_service.build_voice_block(creator)
+
     return (
         f"You are SKOUT Agent, an AI career manager for {name}, "
         f"a creator on the SKOUT platform.\n\n"
@@ -87,7 +90,8 @@ def _build_system_prompt(creator: Creator, completed_deals: int) -> str:
         f"- Completed deals: {completed_deals}\n"
         f"- Best performing format: {best_format}\n"
         f"- Local audience: {local_pct}%\n"
-        f"- Audience: {audience_gender}, {audience_age}\n\n"
+        f"- Audience: {audience_gender}, {audience_age}\n"
+        f"{voice_block}\n\n"
         f"Always use these real numbers when giving advice. Never invent data. "
         f"If you don't have a data point, say so and suggest they update their profile. "
         f"Be direct, specific, and use actual numbers in every response. "
